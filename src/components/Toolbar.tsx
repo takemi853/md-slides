@@ -1,0 +1,67 @@
+"use client";
+
+import Link from "next/link";
+import { useSlides } from "@/hooks/useSlides";
+import { getTheme, themes } from "@/lib/themes";
+import type { ThemeName } from "@/types";
+
+export default function Toolbar() {
+  const { slides, currentIndex, theme, setTheme } = useSlides();
+  const currentTheme = getTheme(theme);
+
+  return (
+    <div
+      className="flex items-center justify-between px-4 py-2 text-sm"
+      style={{
+        backgroundColor: currentTheme.bg,
+        borderBottom: `1px solid ${currentTheme.border}`,
+        color: currentTheme.text,
+      }}
+    >
+      {/* Left: App name */}
+      <div className="flex items-center gap-3">
+        <span
+          className="font-bold text-base tracking-tight"
+          style={{ color: currentTheme.heading }}
+        >
+          md-slides
+        </span>
+        <span style={{ opacity: 0.4 }}>|</span>
+        <span style={{ opacity: 0.6 }}>
+          Slide {slides.length > 0 ? currentIndex + 1 : 0} / {slides.length}
+        </span>
+      </div>
+
+      {/* Center: Theme switcher */}
+      <div className="flex items-center gap-1">
+        {(Object.keys(themes) as ThemeName[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTheme(t)}
+            className="px-3 py-1 rounded text-xs font-medium transition-all cursor-pointer"
+            style={{
+              backgroundColor: t === theme ? currentTheme.accent : "transparent",
+              color: t === theme ? currentTheme.bg : currentTheme.text,
+              border: `1px solid ${t === theme ? currentTheme.accent : currentTheme.border}`,
+              opacity: t === theme ? 1 : 0.7,
+            }}
+          >
+            {themes[t].label}
+          </button>
+        ))}
+      </div>
+
+      {/* Right: Present mode button */}
+      <Link
+        href="/present"
+        className="px-4 py-1.5 rounded font-medium text-xs transition-all"
+        style={{
+          backgroundColor: currentTheme.heading,
+          color: currentTheme.bg,
+        }}
+      >
+        Present →
+      </Link>
+    </div>
+  );
+}

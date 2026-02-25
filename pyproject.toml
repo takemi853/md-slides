@@ -1,0 +1,29 @@
+[project]
+name = "md-slides"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "evolve_code",
+]
+
+[tool.uv.sources]
+evolve_code = { path = "../evolve_code", editable = true }
+
+[tool.evolve]
+project_name = "md-slides"
+target = "src"
+evaluator = "evolve_evaluator:SlideshowEvaluator"
+population_db = "population.json"
+app_type = "web"
+tech_stack = ["typescript", "react", "nextjs", "tailwindcss", "framer-motion", "zustand"]
+run_command = "npm run dev"
+evolution_log = "docs/evolution-log.md"
+auto_log = true
+
+[tool.evolve.map_elites]
+dimensions = ["animation_quality", "feature_completeness", "ui_quality"]
+bins = 10
+
+[tool.evolve.selection]
+tournament_size = 3
+elite_fraction = 0.2

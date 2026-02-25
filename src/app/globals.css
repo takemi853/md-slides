@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Slide content styles - applied via dangerouslySetInnerHTML */
+.slide-element ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.slide-element ul li {
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  position: relative;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.slide-element ul li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  opacity: 0.7;
+}
+
+.slide-element ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.slide-element ol li {
+  padding: 0.2rem 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.slide-element p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.slide-element code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+.slide-element pre code {
+  padding: 0;
+  background: none;
+}
+
+.slide-element table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+}
+
+.slide-element th,
+.slide-element td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: left;
+}
+
+.slide-element th {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.slide-element strong {
+  font-weight: 700;
+}
+
+.slide-element em {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
 }
