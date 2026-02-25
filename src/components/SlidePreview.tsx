@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import Slide from "./Slide";
 import { useSlides } from "@/hooks/useSlides";
 import { getTheme } from "@/lib/themes";
@@ -35,6 +35,7 @@ export default function SlidePreview() {
           border: `1px solid ${currentTheme.border}`,
           borderRadius: "0.5rem",
           margin: "1rem",
+          boxShadow: `0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15)`,
         }}
       >
         {slides.length === 0 ? (
@@ -63,51 +64,63 @@ export default function SlidePreview() {
         className="flex items-center justify-between px-4 py-3"
         style={{ borderTop: `1px solid ${currentTheme.border}` }}
       >
-        <button
+        <motion.button
           onClick={handlePrev}
           disabled={currentIndex === 0}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="px-4 py-2 rounded font-medium text-sm transition-opacity disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           style={{
             backgroundColor: currentTheme.accent,
             color: currentTheme.bg,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.2)`,
           }}
         >
           ← Prev
-        </button>
+        </motion.button>
 
         <div
           className="flex gap-1.5 items-center"
-          style={{ color: currentTheme.text, opacity: 0.6, fontSize: "0.85rem" }}
+          style={{ color: currentTheme.text, fontSize: "0.85rem" }}
         >
           {slides.map((_, i) => (
-            <button
+            <motion.button
               key={i}
               onClick={() => {
                 setDirection(i > currentIndex ? 1 : -1);
                 useSlides.getState().setCurrentIndex(i);
               }}
-              className="w-2 h-2 rounded-full transition-all cursor-pointer"
+              whileHover={{ scale: 1.4 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-2 h-2 rounded-full cursor-pointer"
               style={{
                 backgroundColor:
                   i === currentIndex ? currentTheme.accent : currentTheme.border,
                 transform: i === currentIndex ? "scale(1.4)" : "scale(1)",
+                transition: "background-color 0.2s, transform 0.2s",
               }}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
+          <span style={{ opacity: 0.6, marginLeft: "0.5rem" }}>
+            {slides.length > 0 ? currentIndex + 1 : 0} / {slides.length}
+          </span>
         </div>
 
-        <button
+        <motion.button
           onClick={handleNext}
           disabled={currentIndex === slides.length - 1}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="px-4 py-2 rounded font-medium text-sm transition-opacity disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           style={{
             backgroundColor: currentTheme.accent,
             color: currentTheme.bg,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.2)`,
           }}
         >
           Next →
-        </button>
+        </motion.button>
       </div>
     </div>
   );

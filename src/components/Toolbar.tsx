@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useSlides } from "@/hooks/useSlides";
 import { getTheme, themes } from "@/lib/themes";
@@ -16,6 +17,7 @@ export default function Toolbar() {
         backgroundColor: currentTheme.bg,
         borderBottom: `1px solid ${currentTheme.border}`,
         color: currentTheme.text,
+        boxShadow: `0 1px 8px rgba(0,0,0,0.2)`,
       }}
     >
       {/* Left: App name */}
@@ -35,33 +37,40 @@ export default function Toolbar() {
       {/* Center: Theme switcher */}
       <div className="flex items-center gap-1">
         {(Object.keys(themes) as ThemeName[]).map((t) => (
-          <button
+          <motion.button
             key={t}
             onClick={() => setTheme(t)}
-            className="px-3 py-1 rounded text-xs font-medium transition-all cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-3 py-1 rounded text-xs font-medium cursor-pointer"
             style={{
               backgroundColor: t === theme ? currentTheme.accent : "transparent",
               color: t === theme ? currentTheme.bg : currentTheme.text,
               border: `1px solid ${t === theme ? currentTheme.accent : currentTheme.border}`,
               opacity: t === theme ? 1 : 0.7,
+              transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
             }}
           >
             {themes[t].label}
-          </button>
+          </motion.button>
         ))}
       </div>
 
       {/* Right: Present mode button */}
-      <Link
-        href="/present"
-        className="px-4 py-1.5 rounded font-medium text-xs transition-all"
-        style={{
-          backgroundColor: currentTheme.heading,
-          color: currentTheme.bg,
-        }}
-      >
-        Present →
-      </Link>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Link
+          href="/present"
+          className="px-4 py-1.5 rounded font-medium text-xs block"
+          style={{
+            backgroundColor: currentTheme.heading,
+            color: currentTheme.bg,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.3)`,
+            transition: "opacity 0.15s",
+          }}
+        >
+          Present →
+        </Link>
+      </motion.div>
     </div>
   );
 }

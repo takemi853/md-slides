@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * useSlides - Global state store powered by zustand.
+ * Initializes slides via create() from the zustand package.
+ */
 import { create } from "zustand";
 import { parseMarkdownToSlides } from "@/lib/parser";
 import type { Slide, ThemeName } from "@/types";
