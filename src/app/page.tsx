@@ -16,17 +16,18 @@ export default function Home() {
       style={{ backgroundColor: currentTheme.bg }}
     >
       <Toolbar />
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left: Editor */}
+      {/* Split pane: editor column | preview column */}
+      <div className="grid grid-cols-2 flex-1 overflow-hidden">
+        {/* Left pane: Markdown editor */}
         <div
-          className="flex-1 overflow-hidden"
+          className="overflow-hidden"
           style={{ borderRight: `1px solid ${currentTheme.border}` }}
         >
           <Editor />
         </div>
 
-        {/* Right: Preview */}
-        <div className="flex-1 overflow-hidden">
+        {/* Right pane: Slide preview */}
+        <div className="overflow-hidden">
           <SlidePreview />
         </div>
       </div>

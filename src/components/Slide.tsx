@@ -37,15 +37,11 @@ const containerVariants: Variants = {
 const headingVariants: Variants = {
   enter: { opacity: 0, y: -20, scale: 0.92 },
   center: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
+    opacity: 1, y: 0, scale: 1,
     transition: { duration: 0.4, ease: "easeOut" },
   },
   exit: {
-    opacity: 0,
-    y: 12,
-    scale: 0.9,
+    opacity: 0, y: 12, scale: 0.9,
     transition: { duration: 0.2 },
   },
 };
@@ -65,13 +61,11 @@ const listVariants: Variants = {
 const listItemVariants: Variants = {
   enter: { opacity: 0, x: -24 },
   center: {
-    opacity: 1,
-    x: 0,
+    opacity: 1, x: 0,
     transition: { duration: 0.3, ease: "easeOut" },
   },
   exit: {
-    opacity: 0,
-    x: 20,
+    opacity: 0, x: 20,
     transition: { duration: 0.2 },
   },
 };
@@ -79,13 +73,11 @@ const listItemVariants: Variants = {
 const codeVariants: Variants = {
   enter: { opacity: 0, y: 16 },
   center: {
-    opacity: 1,
-    y: 0,
+    opacity: 1, y: 0,
     transition: { duration: 0.35, ease: "easeOut" },
   },
   exit: {
-    opacity: 0,
-    y: -10,
+    opacity: 0, y: -10,
     transition: { duration: 0.2 },
   },
 };
@@ -93,16 +85,36 @@ const codeVariants: Variants = {
 const defaultVariants: Variants = {
   enter: { opacity: 0, y: 12 },
   center: {
-    opacity: 1,
-    y: 0,
+    opacity: 1, y: 0,
     transition: { duration: 0.35, ease: "easeOut" },
   },
   exit: {
-    opacity: 0,
-    y: -8,
+    opacity: 0, y: -8,
     transition: { duration: 0.2 },
   },
 };
+
+// Expanded motion tag map for per-element semantic animation
+const motionTags = {
+  h1: motion.h1,
+  h2: motion.h2,
+  h3: motion.h3,
+  h4: motion.h4,
+  h5: motion.h5,
+  h6: motion.h6,
+  p: motion.p,
+  ul: motion.ul,
+  ol: motion.ol,
+  li: motion.li,
+  pre: motion.pre,
+  blockquote: motion.blockquote,
+  table: motion.table,
+  section: motion.section,
+  article: motion.article,
+  figure: motion.figure,
+} as const;
+
+type MotionTagKey = keyof typeof motionTags;
 
 export default function Slide({ slide, theme, direction = 1 }: SlideProps) {
   const [elements, setElements] = useState<string[]>([]);
@@ -126,16 +138,12 @@ export default function Slide({ slide, theme, direction = 1 }: SlideProps) {
       style={{
         backgroundColor: theme.bg,
         color: theme.text,
+        fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
       }}
     >
       <AnimatePresence mode="wait">
         {elements.map((html, i) => (
-          <AnimatedElement
-            key={i}
-            html={html}
-            theme={theme}
-            index={i}
-          />
+          <AnimatedElement key={i} html={html} theme={theme} />
         ))}
       </AnimatePresence>
     </motion.div>
@@ -145,25 +153,29 @@ export default function Slide({ slide, theme, direction = 1 }: SlideProps) {
 interface AnimatedElementProps {
   html: string;
   theme: Theme;
-  index: number;
 }
 
 function getElementVariants(tag: string): Variants {
-  if (tag === "h1" || tag === "h2" || tag === "h3") return headingVariants;
+  if (tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "h5" || tag === "h6") return headingVariants;
   if (tag === "ul" || tag === "ol") return listVariants;
+  if (tag === "li") return listItemVariants;
   if (tag === "pre") return codeVariants;
   return defaultVariants;
 }
 
-function AnimatedElement({ html, theme, index: _index }: AnimatedElementProps) {
+function AnimatedElement({ html, theme }: AnimatedElementProps) {
   const tag = html.match(/^<(\w+)/)?.[1] ?? "";
   const variants = getElementVariants(tag);
+  const MotionComponent = (motionTags[tag as MotionTagKey] ?? motion.div) as React.ElementType;
 
   return (
-    <motion.div
+    <MotionComponent
       variants={variants}
       className="slide-element"
-      style={getElementStyle(tag, theme)}
+      style={{
+        ...getElementStyle(tag, theme),
+        fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
+      }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -177,10 +189,11 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       ...base,
       color: theme.heading,
       fontSize: "2.5rem",
-      fontWeight: 800,
+      fontWeight: 900,
       lineHeight: 1.2,
       marginBottom: "1rem",
       letterSpacing: "-0.02em",
+      textShadow: `0 0 40px ${theme.heading}44`,
     };
   }
   if (tag === "h2") {
@@ -212,8 +225,8 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       fontSize: "0.875rem",
       overflowX: "auto",
       border: `1px solid ${theme.border}`,
-      fontFamily: "monospace",
-      boxShadow: `0 2px 12px rgba(0,0,0,0.3)`,
+      fontFamily: "'Courier New', Courier, monospace",
+      boxShadow: `0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)`,
     };
   }
   if (tag === "blockquote") {
@@ -224,6 +237,7 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       color: theme.text,
       opacity: 0.85,
       fontStyle: "italic",
+      boxShadow: `inset 2px 0 8px rgba(0,0,0,0.1)`,
     };
   }
   return base;

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,9 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const notoSansJP = Noto_Sans_JP({
+  weight: ["400", "500", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-noto-jp",
+  display: "swap",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   title: "md-slides — Markdown to Animated Slides",
-  description: "Transform Markdown into Manim-style animated slides",
+  description: "Transform Markdown into Manim-style animated slides / Markdownからアニメーションスライドを作成",
 };
 
 export default function RootLayout({
@@ -23,10 +31,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ height: "100vh", overflow: "hidden" }}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansJP.variable} antialiased`}
+        style={{
+          height: "100vh",
+          overflow: "hidden",
+          fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
+        }}
       >
         {children}
       </body>

@@ -17,17 +17,23 @@ export default function Toolbar() {
         backgroundColor: currentTheme.bg,
         borderBottom: `1px solid ${currentTheme.border}`,
         color: currentTheme.text,
-        boxShadow: `0 1px 8px rgba(0,0,0,0.2)`,
+        boxShadow: `0 1px 8px rgba(0,0,0,0.2), inset 0 -1px 0 ${currentTheme.border}`,
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
       }}
     >
       {/* Left: App name */}
       <div className="flex items-center gap-3">
-        <span
+        <motion.span
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
           className="font-bold text-base tracking-tight"
           style={{ color: currentTheme.heading }}
         >
           md-slides
-        </span>
+        </motion.span>
         <span style={{ opacity: 0.4 }}>|</span>
         <span style={{ opacity: 0.6 }}>
           Slide {slides.length > 0 ? currentIndex + 1 : 0} / {slides.length}
@@ -49,6 +55,7 @@ export default function Toolbar() {
               border: `1px solid ${t === theme ? currentTheme.accent : currentTheme.border}`,
               opacity: t === theme ? 1 : 0.7,
               transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
+              boxShadow: t === theme ? `0 2px 8px ${currentTheme.accent}44` : "none",
             }}
           >
             {themes[t].label}
@@ -64,8 +71,9 @@ export default function Toolbar() {
           style={{
             backgroundColor: currentTheme.heading,
             color: currentTheme.bg,
-            boxShadow: `0 2px 8px rgba(0,0,0,0.3)`,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)`,
             transition: "opacity 0.15s",
+            fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
           }}
         >
           Present →

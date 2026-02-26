@@ -8,49 +8,49 @@ import { create } from "zustand";
 import { parseMarkdownToSlides } from "@/lib/parser";
 import type { Slide, ThemeName } from "@/types";
 
-const DEFAULT_MARKDOWN = `# Welcome to md-slides
+const DEFAULT_MARKDOWN = `# md-slides へようこそ
 
-Transform your **Markdown** into animated slides
+**Markdown** からアニメーションスライドを作成
 
-- Fast live preview
-- Manim-style animations
-- Multiple themes
+- リアルタイムプレビュー
+- Manim スタイルアニメーション
+- 日本語フォント対応
 
 ---
 
-## Getting Started
+## はじめ方 / Getting Started
 
-Write your content using Markdown
+Markdown で内容を書くだけ
 
 \`\`\`typescript
 const slide = {
-  title: "My Slide",
-  content: "Hello World"
+  title: "スライドタイトル",
+  content: "内容をここに書く"
 };
 \`\`\`
 
 ---
 
-## Features
+## 機能一覧 / Features
 
-- **Editor** — live Markdown editing
-- **Preview** — real-time slide preview
-- **Present** — fullscreen presentation mode
-- **Themes** — Dark, Light, and Manim
-
----
-
-## Present Mode
-
-Press the **Present** button or navigate to \`/present\`
-
-Use **← →** arrow keys to navigate slides
+- **エディタ** — ライブ Markdown 編集
+- **プレビュー** — リアルタイムスライドプレビュー
+- **発表モード** — フルスクリーン発表
+- **テーマ** — Dark・Light・Manim
 
 ---
 
-# Thank You!
+## 発表モード / Present Mode
 
-Start editing the Markdown on the left to create your slides
+**Present →** ボタンを押すか \`/present\` へ移動
+
+**← →** キーでスライドを切り替え、**Escape** で戻る
+
+---
+
+# ありがとうございました！
+
+左側の Markdown を編集してオリジナルスライドを作成してください
 `;
 
 interface SlidesState {

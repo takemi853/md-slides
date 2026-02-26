@@ -8,6 +8,8 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --font-noto-jp: "Noto Sans JP", sans-serif;
 }
 
 * {
@@ -19,37 +21,37 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: var(--font-noto-jp), var(--font-geist-sans), sans-serif;
 }
 
-/* Slide container entry animation */
+/* ── Keyframe Animations ─────────────────────────────────── */
+
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes glowPulse {
   0%, 100% { box-shadow: var(--shadow-md); }
-  50% { box-shadow: 0 4px 24px rgba(255, 215, 0, 0.2), var(--shadow-md); }
+  50%       { box-shadow: 0 4px 24px rgba(255, 215, 0, 0.25), var(--shadow-md); }
 }
 
-/* Slide content styles - applied via dangerouslySetInnerHTML */
+@keyframes accentBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Slide content styles (dangerouslySetInnerHTML) ──────── */
+
+.slide-element {
+  font-family: var(--font-noto-jp), var(--font-geist-sans), sans-serif;
+}
+
 .slide-element ul {
   list-style: none;
   padding: 0;
@@ -60,7 +62,7 @@ body {
   padding: 0.25rem 0 0.25rem 1.5rem;
   position: relative;
   font-size: 1.125rem;
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 .slide-element ul li::before {
@@ -78,13 +80,13 @@ body {
 .slide-element ol li {
   padding: 0.2rem 0;
   font-size: 1.125rem;
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 .slide-element p {
   margin: 0.5rem 0;
   font-size: 1.1rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .slide-element code {
@@ -115,9 +117,9 @@ body {
 }
 
 .slide-element th {
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.05);
-  opacity: 0.9;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .slide-element strong {
@@ -135,25 +137,38 @@ body {
   margin: 0.75rem 0;
   font-style: italic;
   opacity: 0.85;
+  box-shadow: inset 2px 0 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Gradient accent bar for slide preview */
+/* ── Decorative gradient bar ─────────────────────────────── */
+
 .slide-accent-bar {
   background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
   height: 2px;
   width: 100%;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.slide-radial-glow {
+  background: radial-gradient(ellipse at center, var(--accent, #ffd700) 0%, transparent 70%);
+  opacity: 0.06;
+  pointer-events: none;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* Standard 16:9 slide aspect ratio */
+.slide-aspect {
+  aspect-ratio: 16/9;
 }
 
+/* Responsive sm: utility for narrow screens */
+@media (max-width: 640px) {
+  .slide-element { font-size: 0.9rem; }
+  .slide-element h1 { font-size: 1.8rem; }
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
