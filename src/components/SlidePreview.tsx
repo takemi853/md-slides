@@ -15,6 +15,8 @@ export default function SlidePreview() {
   const handlePrev = () => { setDirection(-1); prevSlide(); };
   const currentSlide = slides[currentIndex];
 
+  const progress = slides.length > 1 ? currentIndex / (slides.length - 1) : 1;
+
   return (
     <div
       className="flex flex-col h-full"
@@ -30,10 +32,24 @@ export default function SlidePreview() {
           style={{
             border: `1px solid ${currentTheme.border}`,
             borderRadius: "0.5rem",
-            boxShadow: `0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04)`,
-            background: `radial-gradient(ellipse at 50% 0%, ${currentTheme.heading}08 0%, transparent 70%), ${currentTheme.bg}`,
+            boxShadow: `0 4px 24px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04)`,
+            background: currentTheme.bg,
           }}
         >
+          {/* Animated progress bar */}
+          <motion.div
+            className="absolute top-0 left-0 h-[3px] z-10"
+            style={{
+              background: `linear-gradient(90deg, ${currentTheme.accent}, ${currentTheme.heading})`,
+              transformOrigin: "left",
+              boxShadow: `0 0 8px ${currentTheme.accent}88`,
+              borderRadius: "0 2px 2px 0",
+            }}
+            animate={{ scaleX: progress }}
+            transition={{ type: "spring", stiffness: 180, damping: 26 }}
+            initial={false}
+          />
+
           {slides.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
@@ -69,8 +85,8 @@ export default function SlidePreview() {
         <motion.button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06, x: -2 }}
+          whileTap={{ scale: 0.94 }}
           className="px-4 py-2 rounded font-medium text-sm disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           style={{
             backgroundColor: currentTheme.accent,
@@ -82,7 +98,7 @@ export default function SlidePreview() {
           ← Prev
         </motion.button>
 
-        <div className="flex gap-1.5 items-center" style={{ color: currentTheme.text, fontSize: "0.85rem" }}>
+        <div className="flex gap-2 items-center" style={{ color: currentTheme.text, fontSize: "0.85rem" }}>
           {slides.map((_, i) => (
             <motion.button
               key={i}
@@ -90,13 +106,16 @@ export default function SlidePreview() {
                 setDirection(i > currentIndex ? 1 : -1);
                 useSlides.getState().setCurrentIndex(i);
               }}
-              whileHover={{ scale: 1.5 }}
-              whileTap={{ scale: 0.85 }}
-              className="w-2 h-2 rounded-full cursor-pointer"
-              style={{
+              whileHover={{ scale: 1.6 }}
+              whileTap={{ scale: 0.8 }}
+              animate={{
+                width: i === currentIndex ? 20 : 8,
                 backgroundColor: i === currentIndex ? currentTheme.accent : currentTheme.border,
-                transition: "background-color 0.2s",
-                boxShadow: i === currentIndex ? `0 0 6px ${currentTheme.accent}88` : "none",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              className="h-2 rounded-full cursor-pointer"
+              style={{
+                boxShadow: i === currentIndex ? `0 0 8px ${currentTheme.accent}99` : "none",
               }}
               aria-label={`Go to slide ${i + 1}`}
             />
@@ -106,7 +125,7 @@ export default function SlidePreview() {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 0.6, y: 0 }}
             transition={{ duration: 0.2 }}
-            style={{ marginLeft: "0.5rem" }}
+            style={{ marginLeft: "0.25rem", minWidth: "3rem", textAlign: "right" }}
           >
             {slides.length > 0 ? currentIndex + 1 : 0} / {slides.length}
           </motion.span>
@@ -115,8 +134,8 @@ export default function SlidePreview() {
         <motion.button
           onClick={handleNext}
           disabled={currentIndex === slides.length - 1}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06, x: 2 }}
+          whileTap={{ scale: 0.94 }}
           className="px-4 py-2 rounded font-medium text-sm disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           style={{
             backgroundColor: currentTheme.accent,

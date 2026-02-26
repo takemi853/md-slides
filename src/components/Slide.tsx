@@ -10,39 +10,45 @@ interface SlideProps {
   direction?: number;
 }
 
+const springTransition = {
+  type: "spring" as const,
+  stiffness: 260,
+  damping: 28,
+  mass: 0.9,
+};
+
 const containerVariants: Variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 100 : -100,
+    x: direction > 0 ? 80 : -80,
     opacity: 0,
-    scale: 0.96,
+    scale: 0.97,
   }),
   center: {
     x: 0,
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 0.45,
-      ease: "easeOut",
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
+      ...springTransition,
+      staggerChildren: 0.07,
+      delayChildren: 0.05,
     },
   },
   exit: {
     opacity: 0,
     scale: 0.96,
-    transition: { duration: 0.3, ease: "easeIn" },
+    transition: { duration: 0.25, ease: "easeIn" },
   },
 };
 
 const headingVariants: Variants = {
-  enter: { opacity: 0, y: -20, scale: 0.92 },
+  enter: { opacity: 0, y: -18, scale: 0.94 },
   center: {
     opacity: 1, y: 0, scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" },
+    transition: { ...springTransition },
   },
   exit: {
-    opacity: 0, y: 12, scale: 0.9,
-    transition: { duration: 0.2 },
+    opacity: 0, y: 10, scale: 0.92,
+    transition: { duration: 0.18 },
   },
 };
 
@@ -50,47 +56,59 @@ const listVariants: Variants = {
   enter: { opacity: 0 },
   center: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
   },
   exit: {
     opacity: 0,
-    transition: { staggerChildren: 0.05, staggerDirection: -1 },
+    transition: { staggerChildren: 0.04, staggerDirection: -1 },
   },
 };
 
 const listItemVariants: Variants = {
-  enter: { opacity: 0, x: -24 },
+  enter: { opacity: 0, x: -20 },
   center: {
     opacity: 1, x: 0,
-    transition: { duration: 0.3, ease: "easeOut" },
+    transition: { ...springTransition, stiffness: 300, damping: 30 },
   },
   exit: {
-    opacity: 0, x: 20,
-    transition: { duration: 0.2 },
+    opacity: 0, x: 16,
+    transition: { duration: 0.15 },
   },
 };
 
 const codeVariants: Variants = {
-  enter: { opacity: 0, y: 16 },
+  enter: { opacity: 0, y: 14, scale: 0.98 },
   center: {
-    opacity: 1, y: 0,
-    transition: { duration: 0.35, ease: "easeOut" },
+    opacity: 1, y: 0, scale: 1,
+    transition: { ...springTransition },
   },
   exit: {
-    opacity: 0, y: -10,
-    transition: { duration: 0.2 },
+    opacity: 0, y: -8,
+    transition: { duration: 0.18 },
+  },
+};
+
+const tableVariants: Variants = {
+  enter: { opacity: 0, y: 12 },
+  center: {
+    opacity: 1, y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.15 },
   },
 };
 
 const defaultVariants: Variants = {
-  enter: { opacity: 0, y: 12 },
+  enter: { opacity: 0, y: 10 },
   center: {
     opacity: 1, y: 0,
-    transition: { duration: 0.35, ease: "easeOut" },
+    transition: { ...springTransition, stiffness: 300, damping: 32 },
   },
   exit: {
-    opacity: 0, y: -8,
-    transition: { duration: 0.2 },
+    opacity: 0, y: -6,
+    transition: { duration: 0.18 },
   },
 };
 
@@ -112,6 +130,7 @@ const motionTags = {
   section: motion.section,
   article: motion.article,
   figure: motion.figure,
+  hr: motion.hr,
 } as const;
 
 type MotionTagKey = keyof typeof motionTags;
@@ -139,8 +158,23 @@ export default function Slide({ slide, theme, direction = 1 }: SlideProps) {
         backgroundColor: theme.bg,
         color: theme.text,
         fontFamily: "var(--font-noto-jp), var(--font-geist-sans), sans-serif",
-      }}
+        // Expose theme tokens as CSS custom properties for globals.css
+        "--slide-accent": theme.accent,
+        "--slide-heading": theme.heading,
+        "--slide-border": theme.border,
+      } as React.CSSProperties}
     >
+      {/* Subtle radial glow at top-center */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `radial-gradient(ellipse 70% 40% at 50% 0%, ${theme.heading}0c 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
+
       <AnimatePresence mode="wait">
         {elements.map((html, i) => (
           <AnimatedElement key={i} html={html} theme={theme} />
@@ -156,10 +190,11 @@ interface AnimatedElementProps {
 }
 
 function getElementVariants(tag: string): Variants {
-  if (tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "h5" || tag === "h6") return headingVariants;
+  if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(tag)) return headingVariants;
   if (tag === "ul" || tag === "ol") return listVariants;
   if (tag === "li") return listItemVariants;
   if (tag === "pre") return codeVariants;
+  if (tag === "table") return tableVariants;
   return defaultVariants;
 }
 
@@ -182,7 +217,7 @@ function AnimatedElement({ html, theme }: AnimatedElementProps) {
 }
 
 function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
-  const base: React.CSSProperties = { marginBottom: "0.75rem" };
+  const base: React.CSSProperties = { marginBottom: "0.65rem" };
 
   if (tag === "h1") {
     return {
@@ -190,10 +225,10 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       color: theme.heading,
       fontSize: "2.5rem",
       fontWeight: 900,
-      lineHeight: 1.2,
+      lineHeight: 1.15,
       marginBottom: "1rem",
-      letterSpacing: "-0.02em",
-      textShadow: `0 0 40px ${theme.heading}44`,
+      letterSpacing: "-0.025em",
+      textShadow: `0 0 48px ${theme.heading}44, 0 2px 8px rgba(0,0,0,0.4)`,
     };
   }
   if (tag === "h2") {
@@ -202,8 +237,9 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       color: theme.heading,
       fontSize: "1.875rem",
       fontWeight: 700,
-      lineHeight: 1.3,
-      letterSpacing: "-0.01em",
+      lineHeight: 1.25,
+      letterSpacing: "-0.015em",
+      textShadow: `0 0 24px ${theme.heading}33`,
     };
   }
   if (tag === "h3") {
@@ -213,6 +249,24 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       fontSize: "1.5rem",
       fontWeight: 600,
       letterSpacing: "-0.01em",
+    };
+  }
+  if (tag === "h4") {
+    return {
+      ...base,
+      color: theme.accent,
+      fontSize: "1.25rem",
+      fontWeight: 600,
+      opacity: 0.9,
+    };
+  }
+  if (tag === "h5" || tag === "h6") {
+    return {
+      ...base,
+      color: theme.text,
+      fontSize: "1.1rem",
+      fontWeight: 600,
+      opacity: 0.8,
     };
   }
   if (tag === "pre") {
@@ -226,18 +280,38 @@ function getElementStyle(tag: string, theme: Theme): React.CSSProperties {
       overflowX: "auto",
       border: `1px solid ${theme.border}`,
       fontFamily: "'Courier New', Courier, monospace",
-      boxShadow: `0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)`,
+      boxShadow: `0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)`,
     };
   }
   if (tag === "blockquote") {
     return {
       ...base,
-      borderLeft: `4px solid ${theme.accent}`,
       paddingLeft: "1rem",
       color: theme.text,
-      opacity: 0.85,
+      opacity: 0.87,
       fontStyle: "italic",
-      boxShadow: `inset 2px 0 8px rgba(0,0,0,0.1)`,
+    };
+  }
+  if (tag === "table") {
+    return {
+      ...base,
+      width: "100%",
+      borderCollapse: "collapse" as React.CSSProperties["borderCollapse"],
+    };
+  }
+  if (tag === "hr") {
+    return {
+      ...base,
+      border: "none",
+      height: "1px",
+      opacity: 0.5,
+    };
+  }
+  if (tag === "figure") {
+    return {
+      ...base,
+      textAlign: "center" as React.CSSProperties["textAlign"],
+      margin: "0.75rem auto",
     };
   }
   return base;

@@ -10,6 +10,10 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   --font-noto-jp: "Noto Sans JP", sans-serif;
+  /* Slide theme tokens (overridden per-slide by Slide.tsx inline vars) */
+  --slide-accent: #00ffff;
+  --slide-heading: #ffff00;
+  --slide-border: #333333;
 }
 
 * {
@@ -41,9 +45,9 @@ body {
   50%       { box-shadow: 0 4px 24px rgba(255, 215, 0, 0.25), var(--shadow-md); }
 }
 
-@keyframes accentBlink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
+@keyframes progressGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 /* ── Slide content styles (dangerouslySetInnerHTML) ──────── */
@@ -52,6 +56,8 @@ body {
   font-family: var(--font-noto-jp), var(--font-geist-sans), sans-serif;
 }
 
+/* — Lists ——————————————————————————————————————————————————— */
+
 .slide-element ul {
   list-style: none;
   padding: 0;
@@ -59,7 +65,7 @@ body {
 }
 
 .slide-element ul li {
-  padding: 0.25rem 0 0.25rem 1.5rem;
+  padding: 0.3rem 0 0.3rem 1.75rem;
   position: relative;
   font-size: 1.125rem;
   line-height: 1.75;
@@ -68,76 +74,239 @@ body {
 .slide-element ul li::before {
   content: "▸";
   position: absolute;
-  left: 0;
+  left: 0.25rem;
+  color: var(--slide-accent);
+  font-size: 0.85em;
+  top: 0.45rem;
+  transition: transform 0.2s;
+}
+
+.slide-element ul li:hover::before {
+  transform: translateX(3px);
+}
+
+/* Nested lists */
+.slide-element ul ul,
+.slide-element ol ul {
+  margin: 0.1rem 0;
+}
+
+.slide-element ul ul li::before {
+  content: "◦";
+  color: var(--slide-accent);
   opacity: 0.7;
 }
 
 .slide-element ol {
-  padding-left: 1.5rem;
+  padding-left: 1.75rem;
   margin: 0.5rem 0;
+  counter-reset: slide-counter;
+  list-style: none;
 }
 
 .slide-element ol li {
-  padding: 0.2rem 0;
+  padding: 0.3rem 0 0.3rem 0.25rem;
   font-size: 1.125rem;
   line-height: 1.75;
+  counter-increment: slide-counter;
+  position: relative;
 }
+
+.slide-element ol li::marker {
+  color: var(--slide-accent);
+  font-weight: 700;
+}
+
+/* Task list */
+.slide-element input[type="checkbox"] {
+  accent-color: var(--slide-accent);
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+  vertical-align: middle;
+}
+
+/* — Paragraph ——————————————————————————————————————————————— */
 
 .slide-element p {
   margin: 0.5rem 0;
   font-size: 1.1rem;
-  line-height: 1.8;
+  line-height: 1.85;
 }
+
+/* — Inline styles ——————————————————————————————————————————— */
+
+.slide-element strong {
+  font-weight: 700;
+  color: var(--slide-heading);
+}
+
+.slide-element em {
+  font-style: italic;
+  opacity: 0.88;
+}
+
+.slide-element del {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+/* — Code ———————————————————————————————————————————————————— */
 
 .slide-element code {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.9em;
-  padding: 0.1em 0.3em;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--slide-accent);
 }
 
 .slide-element pre code {
   padding: 0;
   background: none;
+  border: none;
+  color: inherit;
+  font-size: 0.875rem;
 }
 
-.slide-element table {
+/* Code block line numbers effect */
+.slide-element pre {
+  position: relative;
+}
+
+.slide-element pre::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--slide-accent) 0%, transparent 100%);
+  border-radius: 0.5rem 0.5rem 0 0;
+  opacity: 0.6;
+}
+
+/* — Tables ——————————————————————————————————————————————————— */
+
+.slide-element table,
+.slide-table {
   border-collapse: collapse;
   width: 100%;
   margin: 0.75rem 0;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 .slide-element th,
 .slide-element td {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--slide-border);
   text-align: left;
 }
 
 .slide-element th {
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--slide-accent) 12%, transparent);
+  color: var(--slide-heading);
+  border-bottom: 2px solid var(--slide-accent);
 }
 
-.slide-element strong {
-  font-weight: 700;
+.slide-element tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.slide-element em {
-  font-style: italic;
-  opacity: 0.9;
+.slide-element tr:hover td {
+  background: color-mix(in srgb, var(--slide-accent) 6%, transparent);
+  transition: background 0.15s;
 }
+
+/* — Blockquote ——————————————————————————————————————————————— */
 
 .slide-element blockquote {
-  border-left: 4px solid var(--accent);
-  padding-left: 1rem;
+  border-left: 3px solid var(--slide-accent);
+  padding: 0.5rem 1rem;
   margin: 0.75rem 0;
   font-style: italic;
+  opacity: 0.88;
+  background: color-mix(in srgb, var(--slide-accent) 5%, transparent);
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* — Horizontal rule ——————————————————————————————————————— */
+
+.slide-hr,
+.slide-element hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, var(--slide-accent) 0%, transparent 80%);
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* — Links ——————————————————————————————————————————————————— */
+
+.slide-link,
+.slide-element a {
+  color: var(--slide-accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--slide-accent) 50%, transparent);
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.slide-link:hover,
+.slide-element a:hover {
   opacity: 0.85;
-  box-shadow: inset 2px 0 12px rgba(0, 0, 0, 0.1);
+  border-bottom-color: var(--slide-accent);
+}
+
+/* — Images / Figures ————————————————————————————————————————— */
+
+.slide-figure {
+  margin: 0.75rem auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.slide-img {
+  max-width: 100%;
+  max-height: 40vh;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  border: 1px solid var(--slide-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.slide-figcaption {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+/* — Headings (nested) ——————————————————————————————————————— */
+
+.slide-element h4,
+.slide-element h5,
+.slide-element h6 {
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Progress bar ————————————────————————————————————————— */
+
+.slide-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--slide-accent), var(--slide-heading));
+  transform-origin: left;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--slide-accent) 60%, transparent);
 }
 
 /* ── Decorative gradient bar ─────────────────────────────── */
